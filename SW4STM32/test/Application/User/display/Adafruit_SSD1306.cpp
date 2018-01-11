@@ -17,15 +17,18 @@ All text above, and the splash screen below must be included in any redistributi
 *********************************************************************/
 
 
-#include <stdlib.h>
-#include "Adafruit_GFX.h"
-#include "Adafruit_SSD1306.h""
+#include <display/Adafruit_SSD1306.h>
+#include <stm32f1xx_hal_def.h>
+#include <stm32f1xx_hal_i2c.h>
+#include <sys/_stdint.h>
 #include <cstring>
-#include "stm32f1xx_hal.h"
+#include <hardwareSetup/Hardware.h>
 
 // the memory buffer for the LCD
 
-static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = {
+//+1 because the first byte is the adress of the memory register we write into.
+//The drawing code only sees the array starting at buffer[1].
+static uint8_t dataBuffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1] = {0x40,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -122,14 +125,15 @@ void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color) {
   // x is which column
     switch (color)
     {
-      case WHITE:   buffer[x+ (y/8)*SSD1306_LCDWIDTH] |=  (1 << (y&7)); break;
-      case BLACK:   buffer[x+ (y/8)*SSD1306_LCDWIDTH] &= ~(1 << (y&7)); break;
-      case INVERSE: buffer[x+ (y/8)*SSD1306_LCDWIDTH] ^=  (1 << (y&7)); break;
+      case WHITE:   drawBuffer[x+ (y/8)*SSD1306_LCDWIDTH] |=  (1 << (y&7)); break;
+      case BLACK:   drawBuffer[x+ (y/8)*SSD1306_LCDWIDTH] &= ~(1 << (y&7)); break;
+      case INVERSE: drawBuffer[x+ (y/8)*SSD1306_LCDWIDTH] ^=  (1 << (y&7)); break;
     }
 
 }
 
-Adafruit_SSD1306::Adafruit_SSD1306(I2C_HandleTypeDef& i2c) : Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT), i2c(i2c)
+Adafruit_SSD1306::Adafruit_SSD1306(I2C_HandleTypeDef& i2c) : Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT), i2c(i2c),
+		drawBuffer(&dataBuffer[1])
 {}
 
 
@@ -225,22 +229,22 @@ void Adafruit_SSD1306::ssd1306_command(uint8_t c) {
 //			Error_Handler_msg(HAL_I2C_ERROR_NONE);
 			break;
 		case HAL_I2C_ERROR_BERR:
-			Error_Handler_msg(HAL_I2C_ERROR_BERR);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_BERR");
 			break;
 		case HAL_I2C_ERROR_ARLO:
-			Error_Handler_msg(HAL_I2C_ERROR_ARLO);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_ARLO");
 			break;
 		case HAL_I2C_ERROR_AF:
-			Error_Handler_msg(HAL_I2C_ERROR_AF);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_AF");
 			break;
 		case HAL_I2C_ERROR_OVR:
-			Error_Handler_msg(HAL_I2C_ERROR_OVR);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_OVR");
 			break;
 		case HAL_I2C_ERROR_DMA:
-			Error_Handler_msg(HAL_I2C_ERROR_DMA);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_DMA");
 			break;
 		case HAL_I2C_ERROR_TIMEOUT:
-			Error_Handler_msg(HAL_I2C_ERROR_TIMEOUT);
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_TIMEOUT");
 			break;
 		default:
 //			Error_Handler_msg(default);
@@ -346,6 +350,7 @@ void Adafruit_SSD1306::dim(bool dim) {
 }
 
 void Adafruit_SSD1306::display(void) {
+
   ssd1306_command(SSD1306_COLUMNADDR);
   ssd1306_command(0);   // Column start address (0 = reset)
   ssd1306_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
@@ -363,50 +368,41 @@ void Adafruit_SSD1306::display(void) {
   #endif
 
     // I2C
-    //write line by line
-
-    uint8_t lineBuffer[17];
-    lineBuffer[0] = 0x40;
-
-    for (uint16_t i=0; i<(SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8); i += 16)
+    //write display buffer bulk
+    if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1, 10000) != HAL_OK)
     {
-    	//FIXME why do I have to send it line by line? cant I send all at once?
-    	memcpy(&lineBuffer[1], &buffer[i], 16);
-    	if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, lineBuffer, 17, 10000)!= HAL_OK)
+		switch(HAL_I2C_GetError(&i2c))
 		{
-    		switch(HAL_I2C_GetError(&i2c))
-			{
-			case HAL_I2C_ERROR_NONE://can never happen
-				break;
-			case HAL_I2C_ERROR_BERR:
-				Error_Handler_msg(HAL_I2C_ERROR_BERR);
-				break;
-			case HAL_I2C_ERROR_ARLO:
-				Error_Handler_msg(HAL_I2C_ERROR_ARLO);
-				break;
-			case HAL_I2C_ERROR_AF:
-				Error_Handler_msg(HAL_I2C_ERROR_AF);
-				break;
-			case HAL_I2C_ERROR_OVR:
-				Error_Handler_msg(HAL_I2C_ERROR_OVR);
-				break;
-			case HAL_I2C_ERROR_DMA:
-				Error_Handler_msg(HAL_I2C_ERROR_DMA);
-				break;
-			case HAL_I2C_ERROR_TIMEOUT:
-				Error_Handler_msg(HAL_I2C_ERROR_TIMEOUT);
-				break;
-			default:
-				Error_Handler_msg(DEFAULT_CASE);
-				break;
-			}
+		case HAL_I2C_ERROR_NONE://can never happen
+			break;
+		case HAL_I2C_ERROR_BERR:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_BERR");
+			break;
+		case HAL_I2C_ERROR_ARLO:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_ARLO");
+			break;
+		case HAL_I2C_ERROR_AF:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_AF");
+			break;
+		case HAL_I2C_ERROR_OVR:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_OVR");
+			break;
+		case HAL_I2C_ERROR_DMA:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_DMA");
+			break;
+		case HAL_I2C_ERROR_TIMEOUT:
+			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_TIMEOUT");
+			break;
+		default:
+			Hardware::ErroHandler(__FILE__, __LINE__, "DEFAULT_CASE");
+			break;
 		}
     }
 }
 
 // clear everything
 void Adafruit_SSD1306::clearDisplay(void) {
-  memset(buffer, 0, (SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8));
+  memset(drawBuffer, 0, (SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8));
 }
 
 void Adafruit_SSD1306::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
@@ -462,7 +458,7 @@ void Adafruit_SSD1306::drawFastHLineInternal(int16_t x, int16_t y, int16_t w, ui
   if(w <= 0) { return; }
 
   // set up the pointer for  movement through the buffer
-  register uint8_t *pBuf = buffer;
+  register uint8_t *pBuf = drawBuffer;
   // adjust the buffer pointer for the current row
   pBuf += ((y/8) * SSD1306_LCDWIDTH);
   // and offset x columns in
@@ -541,7 +537,7 @@ void Adafruit_SSD1306::drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h
 
 
   // set up the pointer for fast movement through the buffer
-  register uint8_t *pBuf = buffer;
+  register uint8_t *pBuf = drawBuffer;
   // adjust the buffer pointer for the current row
   pBuf += ((y/8) * SSD1306_LCDWIDTH);
   // and offset x columns in

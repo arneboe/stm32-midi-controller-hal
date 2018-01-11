@@ -37,7 +37,6 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include <Adafruit_SSD1306.h>
 #include "main.h"
 #include "stm32f1xx_hal.h"
 
@@ -47,6 +46,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+DMA_HandleTypeDef hdma_i2c1_tx;
 
 UART_HandleTypeDef huart1;
 
@@ -58,6 +58,7 @@ UART_HandleTypeDef huart1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_I2C1_Init(void);
 
@@ -122,6 +123,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_I2C1_Init();
 
@@ -204,7 +206,7 @@ static void MX_I2C1_Init(void)
 {
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.ClockSpeed = 400000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -235,6 +237,21 @@ static void MX_USART1_UART_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
 
 }
 

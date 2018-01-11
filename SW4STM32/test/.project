@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>test</name>
-	<comment></comment>
+	<comment />
 	<projects>
 	</projects>
 	<buildSpec>
@@ -29,27 +29,27 @@
 		<link>
 			<name>Application/SW4STM32/startup_stm32f103xb.s</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32f103xb.s</locationURI>
+			<location>PARENT-1-PROJECT_LOC/startup_stm32f103xb.s</location>
 		</link>
 		<link>
 			<name>Application/User/main.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
+			<location>PARENT-2-PROJECT_LOC/Src/main.c</location>
 		</link>
 		<link>
 			<name>Application/User/stm32f1xx_hal_msp.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32f1xx_hal_msp.c</locationURI>
+			<location>PARENT-2-PROJECT_LOC/Src/stm32f1xx_hal_msp.c</location>
 		</link>
 		<link>
 			<name>Application/User/stm32f1xx_it.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32f1xx_it.c</locationURI>
+			<location>PARENT-2-PROJECT_LOC/Src/stm32f1xx_it.c</location>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32f1xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/system_stm32f1xx.c</locationURI>
+			<location>PARENT-2-PROJECT_LOC/Src/system_stm32f1xx.c</location>
 		</link>
 		<link>
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal.c</name>

@@ -1,18 +1,21 @@
 #include "Hardware.h"
 
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART1_UART_Init(void);
-static void MX_I2C1_Init(void);
+void SystemClock_Config();
+void MX_GPIO_Init();
+void MX_USART1_UART_Init();
+void MX_I2C1_Init();
+void MX_DMA_Init();
 
 
 I2C_HandleTypeDef Hardware::i2c;
 UART_HandleTypeDef Hardware::uart;
+DMA_HandleTypeDef Hardware::dma_i2c1_tx;
 
 void Hardware::init()
 {
 	HAL_Init();
 	SystemClock_Config();
+	MX_DMA_Init();
 	MX_GPIO_Init();
 	MX_USART1_UART_Init();
 	MX_I2C1_Init();
@@ -80,7 +83,6 @@ void SystemClock_Config(void)
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
-
 /* I2C1 init function */
 void MX_I2C1_Init(void)
 {
@@ -98,8 +100,9 @@ void MX_I2C1_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
 }
+
+
 
 /* USART1 init function */
 void MX_USART1_UART_Init(void)
@@ -120,7 +123,19 @@ void MX_USART1_UART_Init(void)
 
 }
 
-static void MX_GPIO_Init(void)
+void MX_DMA_Init(void)
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
+
+}
+
+void MX_GPIO_Init(void)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
@@ -163,7 +178,7 @@ void _Error_Handler(char * file, int line)
 	    HAL_Delay(600);
 	  }
 }
-void _Error_Handler_msg(char * file, int line, char* msg)
+void Hardware::ErroHandler(char * file, int line, char* msg)
 {
 	printf("ERROR: %s, %d: %s\r\n", file, line, msg);
 	  while (1)

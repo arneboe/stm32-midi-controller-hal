@@ -99,7 +99,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Application/User/syscalls.cpp|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/syscalls.cpp|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -122,8 +122,8 @@
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.release.127164942." name="/" resourcePath="">
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release.1615422783" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.578859327" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string"/>
-							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1377994859" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="STM32F103RBTx" valueType="string"/>
-							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1905023894" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" value="NUCLEO-F103RB" valueType="string"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1377994859" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="STM32F103C8Tx" valueType="string"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1905023894" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" value="test" valueType="string"/>
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1546011547" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet" value="fr.ac6.managedbuild.option.gnu.cross.instructionSet.thumbII" valueType="enumerated"/>
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1864888368" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu" value="fr.ac6.managedbuild.option.gnu.cross.fpu.no" valueType="enumerated"/>
 							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.389382130" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi" value="fr.ac6.managedbuild.option.gnu.cross.floatabi.soft" valueType="enumerated"/>
@@ -203,7 +203,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Application/User/syscalls.cpp|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/syscalls.cpp|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -216,7 +216,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/test"/>
+			<resource resourceType="PROJECT" workspacePath="test"/>
 		</configuration>
 		<configuration configurationName="Release"/>
 	</storageModule>

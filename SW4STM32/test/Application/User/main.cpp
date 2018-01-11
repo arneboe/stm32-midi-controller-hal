@@ -62,35 +62,49 @@ int main(void)
 {
 	Hardware::init();
 
-
-	printf("A\r\n");
 	Adafruit_SSD1306 display(Hardware::i2c);
-	printf("B\r\n");
 	display.begin(SSD1306_SWITCHCAPVCC, 0x78);
-	printf("C\r\n");
 
-  int i = 0;
-  while (1)
-  {
-	  ++i;
-    Hardware::blink();
-    display.dim((i % 2) == 0);
-    testdrawline(display);
-    display.clearDisplay();
-//    display.drawLine(0, 5, display.width(), 5, WHITE);
-    display.drawFastHLine(0, FIRST_LINE_BELOW_YELLOW - 1 , 128, WHITE);
-
-    display.setTextColor(WHITE);
-    display.setCursor(0, FIRST_LINE_BELOW_YELLOW);
-
-    display.setTextSize(2);
-    display.setTextWrap(true);
-    display.println("NANANANA");
-    display.display();
+	uint8_t i = 0;
+	uint32_t t = 0;
+	while (1)
+	{
+		const uint32_t start = HAL_GetTick();
+		++i;
+//		Hardware::blink();
+//		display.dim((i % 2) == 0);
+//		testdrawline(display);
+		display.clearDisplay();
 
 
-    HAL_Delay(3000);
-   printf("AAAAA %d\r\n", i);
-  }
+		//TODO damit das zeichnen schnell wird, muss man ein partial update machen können irgendwie.
+		//     println ist mega teuer, STAGE STROBO dauert 2ms zum printen. Nur printen wenn es sich ändert.
+		//     Vorher nur die Flöche wo sich was ändert schwärzen.
+
+		//    display.drawLine(0, 5, display.width(), 5, WHITE);
+		display.drawFastHLine(0, FIRST_LINE_BELOW_YELLOW - 1 , 128, WHITE);
+
+		display.setTextColor(WHITE);
+		display.setCursor(0, FIRST_LINE_BELOW_YELLOW);
+
+		t = HAL_GetTick() - start;
+
+		display.setTextSize(3);
+		display.setTextWrap(true);
+		display.println("STAGE");
+		display.println("STROBO");
+
+
+		display.setTextSize(2);
+		display.setCursor(0, 0);
+		display.print(t);
+		display.println("   LOG");
+
+		//FIXME display muss mit dma laufen, sonst dauert das 25ms. In der zeit darf ich nicht blockieren sonst laggt midi
+		display.display();
+
+
+//		HAL_Delay(3000);
+	}
 
 }

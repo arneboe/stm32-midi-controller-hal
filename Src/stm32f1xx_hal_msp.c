@@ -36,8 +36,11 @@
   *
   ******************************************************************************
   */
-/* Includes ------------------------------------------------------------------*/
+/* Includes --------------------
+ * ----------------------------------------------*/
 #include "stm32f1xx_hal.h"
+#include <hardwareSetup/Hardware.h>
+
 
 extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
@@ -104,6 +107,24 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 
     /* Peripheral clock enable */
     __HAL_RCC_I2C1_CLK_ENABLE();
+  
+    /* I2C1 DMA Init */
+    /* I2C1_TX Init */
+    Hardware::dma_i2c1_tx.Instance = DMA1_Channel6;
+    Hardware::dma_i2c1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    Hardware::dma_i2c1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    Hardware::dma_i2c1_tx.Init.MemInc = DMA_MINC_ENABLE;
+    Hardware::dma_i2c1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    Hardware::dma_i2c1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    Hardware::dma_i2c1_tx.Init.Mode = DMA_NORMAL;
+    Hardware::dma_i2c1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&Hardware::dma_i2c1_tx) != HAL_OK)
+    {
+      _Error_Handler(__FILE__, __LINE__);
+    }
+
+    __HAL_LINKDMA(hi2c,hdmatx,Hardware::dma_i2c1_tx);
+
   /* USER CODE BEGIN I2C1_MspInit 1 */
 
   /* USER CODE END I2C1_MspInit 1 */
@@ -128,6 +149,8 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
     */
     HAL_GPIO_DeInit(GPIOB, I2C_SCL_PIN_Pin|I2C_SDA_PIN_Pin);
 
+    /* I2C1 DMA DeInit */
+    HAL_DMA_DeInit(hi2c->hdmatx);
   /* USER CODE BEGIN I2C1_MspDeInit 1 */
 
   /* USER CODE END I2C1_MspDeInit 1 */
