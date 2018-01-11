@@ -367,9 +367,11 @@ void Adafruit_SSD1306::display(void) {
     ssd1306_command(1); // Page end address
   #endif
 
+
     // I2C
     //write display buffer bulk
-    if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1, 10000) != HAL_OK)
+    if(HAL_I2C_Master_Transmit_DMA(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1) != HAL_OK)
+//    if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1, 10000) != HAL_OK)
     {
 		switch(HAL_I2C_GetError(&i2c))
 		{
@@ -398,6 +400,7 @@ void Adafruit_SSD1306::display(void) {
 			break;
 		}
     }
+    printf("after transmit\n");
 }
 
 // clear everything
