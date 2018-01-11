@@ -348,60 +348,70 @@ void Adafruit_SSD1306::dim(bool dim) {
   ssd1306_command(SSD1306_SETCONTRAST);
   ssd1306_command(contrast);
 }
+void Adafruit_SSD1306::displayInternal(const uint32_t bufferSize)
+{
 
-void Adafruit_SSD1306::display(void) {
+	  ssd1306_command(SSD1306_COLUMNADDR);
+	  ssd1306_command(0);   // Column start address (0 = reset)
+	  ssd1306_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
 
-  ssd1306_command(SSD1306_COLUMNADDR);
-  ssd1306_command(0);   // Column start address (0 = reset)
-  ssd1306_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
-
-  ssd1306_command(SSD1306_PAGEADDR);
-  ssd1306_command(0); // Page start address (0 = reset)
-  #if SSD1306_LCDHEIGHT == 64
-    ssd1306_command(7); // Page end address
-  #endif
-  #if SSD1306_LCDHEIGHT == 32
-    ssd1306_command(3); // Page end address
-  #endif
-  #if SSD1306_LCDHEIGHT == 16
-    ssd1306_command(1); // Page end address
-  #endif
+	  ssd1306_command(SSD1306_PAGEADDR);
+	  ssd1306_command(0); // Page start address (0 = reset)
+	  #if SSD1306_LCDHEIGHT == 64
+	    ssd1306_command(7); // Page end address
+	  #endif
+	  #if SSD1306_LCDHEIGHT == 32
+	    ssd1306_command(3); // Page end address
+	  #endif
+	  #if SSD1306_LCDHEIGHT == 16
+	    ssd1306_command(1); // Page end address
+	  #endif
 
 
-    // I2C
-    //write display buffer bulk
-    if(HAL_I2C_Master_Transmit_DMA(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1) != HAL_OK)
-//    if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1, 10000) != HAL_OK)
-    {
-		switch(HAL_I2C_GetError(&i2c))
-		{
-		case HAL_I2C_ERROR_NONE://can never happen
-			break;
-		case HAL_I2C_ERROR_BERR:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_BERR");
-			break;
-		case HAL_I2C_ERROR_ARLO:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_ARLO");
-			break;
-		case HAL_I2C_ERROR_AF:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_AF");
-			break;
-		case HAL_I2C_ERROR_OVR:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_OVR");
-			break;
-		case HAL_I2C_ERROR_DMA:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_DMA");
-			break;
-		case HAL_I2C_ERROR_TIMEOUT:
-			Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_TIMEOUT");
-			break;
-		default:
-			Hardware::ErroHandler(__FILE__, __LINE__, "DEFAULT_CASE");
-			break;
-		}
-    }
-    printf("after transmit\n");
+	    // I2C
+	    //write display buffer bulk
+	    if(HAL_I2C_Master_Transmit_DMA(&i2c, (uint16_t)_i2caddr, dataBuffer, bufferSize) != HAL_OK)
+	//    if(HAL_I2C_Master_Transmit(&i2c, (uint16_t)_i2caddr, dataBuffer, SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1, 10000) != HAL_OK)
+	    {
+			switch(HAL_I2C_GetError(&i2c))
+			{
+			case HAL_I2C_ERROR_NONE://can never happen
+				break;
+			case HAL_I2C_ERROR_BERR:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_BERR");
+				break;
+			case HAL_I2C_ERROR_ARLO:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_ARLO");
+				break;
+			case HAL_I2C_ERROR_AF:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_AF");
+				break;
+			case HAL_I2C_ERROR_OVR:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_OVR");
+				break;
+			case HAL_I2C_ERROR_DMA:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_DMA");
+				break;
+			case HAL_I2C_ERROR_TIMEOUT:
+				Hardware::ErroHandler(__FILE__, __LINE__, "HAL_I2C_ERROR_TIMEOUT");
+				break;
+			default:
+				Hardware::ErroHandler(__FILE__, __LINE__, "DEFAULT_CASE");
+				break;
+			}
+	    }
 }
+
+void Adafruit_SSD1306::display(void)
+{
+	displayInternal(SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1);
+}
+
+void Adafruit_SSD1306::displayHeader(void)
+{
+	displayInternal(SSD1306_LCDWIDTH * 2 + 1);
+}
+
 
 // clear everything
 void Adafruit_SSD1306::clearDisplay(void) {

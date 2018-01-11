@@ -128,6 +128,8 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
   void clearDisplay(void);
   void invertDisplay(uint8_t i);
   void display();
+  /** Only update the header, safes some time */
+  void displayHeader();
 
   void startscrollright(uint8_t start, uint8_t stop);
   void startscrollleft(uint8_t start, uint8_t stop);
@@ -148,6 +150,8 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
   int8_t _vccstate;
   I2C_HandleTypeDef& i2c;
   uint8_t* drawBuffer;
+
+  void displayInternal(const uint32_t bufferSize);
 
   inline void drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color) __attribute__((always_inline));
   inline void drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color) __attribute__((always_inline));
