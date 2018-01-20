@@ -5,11 +5,15 @@ void MX_GPIO_Init();
 void MX_USART1_UART_Init();
 void MX_I2C1_Init();
 void MX_DMA_Init();
+void MX_ADC1_Init();
 
 
 I2C_HandleTypeDef Hardware::i2c;
 UART_HandleTypeDef Hardware::uart;
 DMA_HandleTypeDef Hardware::dma_i2c1_tx;
+ADC_HandleTypeDef Hardware::adc1;
+DMA_HandleTypeDef Hardware::dma_adc1;
+
 
 void Hardware::init()
 {
@@ -19,6 +23,14 @@ void Hardware::init()
 	MX_DMA_Init();
 	MX_USART1_UART_Init();
 	MX_I2C1_Init();
+	MX_ADC1_Init();
+
+	/* Run the ADC calibration */
+	if (HAL_ADCEx_Calibration_Start(&Hardware::adc1) != HAL_OK)
+	{
+	/* Calibration Error */
+	Error_Handler();
+	}
 }
 
 
@@ -58,11 +70,11 @@ void _Error_Handler(char * file, int line)
 void Hardware::ErroHandler(char * file, int line, char* msg)
 {
 	printf("ERROR: %s, %d: %s\r\n", file, line, msg);
-	  while (1)
-	  {
-	    Hardware::blink();
-	    HAL_Delay(50);
-	  }
+//	  while (1)
+//	  {
+//	    Hardware::blink();
+//	    HAL_Delay(50);
+//	  }
 }
 
 
@@ -96,6 +108,7 @@ void SystemClock_Config(void)
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
     /**Initializes the CPU, AHB and APB busses clocks
     */
@@ -125,6 +138,14 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+
     /**Configure the Systick interrupt time
     */
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
@@ -135,6 +156,102 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/* ADC1 init function */
+void MX_ADC1_Init(void)
+{
+
+  ADC_ChannelConfTypeDef sConfig;
+
+    /**Common config
+    */
+  Hardware::adc1.Instance = ADC1;
+  Hardware::adc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  Hardware::adc1.Init.ContinuousConvMode = DISABLE;
+  Hardware::adc1.Init.DiscontinuousConvMode = DISABLE;
+  Hardware::adc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  Hardware::adc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  Hardware::adc1.Init.NbrOfConversion = 8;
+  if (HAL_ADC_Init(&Hardware::adc1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 2;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_3;
+  sConfig.Rank = 4;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = 5;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = 6;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = 7;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel
+    */
+  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Rank = 8;
+  if (HAL_ADC_ConfigChannel(&Hardware::adc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+
 }
 
 /* I2C1 init function */
@@ -186,8 +303,12 @@ void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel6_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
+
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
 }
 
@@ -207,6 +328,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);

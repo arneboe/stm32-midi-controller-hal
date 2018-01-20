@@ -20,7 +20,7 @@ All text above, and the splash screen must be included in any redistribution
 
 #ifndef _Adafruit_SSD1306_H_
 #define _Adafruit_SSD1306_H_
-#include "Adafruit_GFX.h""
+#include "Adafruit_GFX.h"
 #include <stdint.h>
 #include "stm32f1xx_hal.h"
 
@@ -127,9 +127,17 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
 
   void clearDisplay(void);
   void invertDisplay(uint8_t i);
-  void display();
-  /** Only update the header, safes some time */
-  void displayHeader();
+
+  /**Blocks until the device is ready, i.e. all transfers are finished */
+  void waitForReady();
+
+  bool displayRead();
+
+  /** @return false if the device is busy */
+  bool display();
+  /** Only update the header, safes some time.
+   *  @return false if the device is busy */
+  bool displayHeader();
 
   void startscrollright(uint8_t start, uint8_t stop);
   void startscrollleft(uint8_t start, uint8_t stop);
@@ -151,7 +159,8 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
   I2C_HandleTypeDef& i2c;
   uint8_t* drawBuffer;
 
-  void displayInternal(const uint32_t bufferSize);
+  /** @return false if device is busy */
+  bool displayInternal(const uint32_t bufferSize);
 
   inline void drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color) __attribute__((always_inline));
   inline void drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color) __attribute__((always_inline));

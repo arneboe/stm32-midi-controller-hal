@@ -348,8 +348,13 @@ void Adafruit_SSD1306::dim(bool dim) {
   ssd1306_command(SSD1306_SETCONTRAST);
   ssd1306_command(contrast);
 }
-void Adafruit_SSD1306::displayInternal(const uint32_t bufferSize)
+bool Adafruit_SSD1306::displayInternal(const uint32_t bufferSize)
 {
+	 //wait if device is not ready
+	  if(HAL_I2C_GetState(&Hardware::i2c) != HAL_I2C_STATE_READY)
+	  {
+		  return false;
+	  }
 
 	  ssd1306_command(SSD1306_COLUMNADDR);
 	  ssd1306_command(0);   // Column start address (0 = reset)
@@ -402,14 +407,21 @@ void Adafruit_SSD1306::displayInternal(const uint32_t bufferSize)
 	    }
 }
 
-void Adafruit_SSD1306::display(void)
+void Adafruit_SSD1306::waitForReady()
 {
-	displayInternal(SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1);
+	while(HAL_I2C_GetState(&Hardware::i2c) != HAL_I2C_STATE_READY)
+	{
+	}
 }
 
-void Adafruit_SSD1306::displayHeader(void)
+bool Adafruit_SSD1306::display(void)
 {
-	displayInternal(SSD1306_LCDWIDTH * 2 + 1);
+	return displayInternal(SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8 + 1);
+}
+
+bool Adafruit_SSD1306::displayHeader(void)
+{
+	return displayInternal(SSD1306_LCDWIDTH * 2 + 1);
 }
 
 

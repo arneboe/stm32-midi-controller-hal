@@ -8,6 +8,8 @@ public:
 	static I2C_HandleTypeDef i2c;
 	static UART_HandleTypeDef uart;
 	static DMA_HandleTypeDef dma_i2c1_tx;
+	static ADC_HandleTypeDef adc1;
+	static DMA_HandleTypeDef dma_adc1;
 
 	static void init();
 
