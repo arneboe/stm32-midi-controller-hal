@@ -101,7 +101,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Inc|Application/User/syscalls.cpp|Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Src|Inc|Application/User/syscalls.cpp|Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -207,7 +207,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Inc|Application/User/syscalls.cpp|Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Src|Inc|Application/User/syscalls.cpp|Application/User/stm32f1xx_it.c|Application/User/stm32f1xx_hal_msp.c|Application/User/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

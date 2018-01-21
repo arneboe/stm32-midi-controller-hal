@@ -32,6 +32,11 @@
 			<location>/home/arne/git/stm32-cubemx-test/test/Inc</location>
 		</link>
 		<link>
+			<name>Src</name>
+			<type>2</type>
+			<location>/home/arne/git/stm32-cubemx-test/test/Src</location>
+		</link>
+		<link>
 			<name>Application/SW4STM32/startup_stm32f103xb.s</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32f103xb.s</locationURI>
@@ -50,11 +55,6 @@
 			<name>Application/User/stm32f1xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32f1xx_it.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/CMSIS/system_stm32f1xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/system_stm32f1xx.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal.c</name>

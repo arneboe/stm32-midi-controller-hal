@@ -76,6 +76,8 @@
 
 #include "stm32f1xx.h"
 
+extern "C"
+{
 /**
   * @}
   */
@@ -434,6 +436,8 @@ void SystemInit_ExtMemCtl(void)
 #endif /* DATA_IN_ExtSRAM */
 #endif /* STM32F100xE || STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG */
 
+
+}
 /**
   * @}
   */
