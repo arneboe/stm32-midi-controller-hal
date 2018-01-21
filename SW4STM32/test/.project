@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>test</name>
-	<comment />
+	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -25,44 +25,51 @@
 		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
-	<linkedResources><link>
-			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc.c</name>
-			<type>1</type>
-			<location>/home/arne/STM32Cube/Repository/STM32Cube_FW_F1_V1.6.0/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c</location>
-		</link><link>
-			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc_ex.c</name>
-			<type>1</type>
-			<location>/home/arne/STM32Cube/Repository/STM32Cube_FW_F1_V1.6.0/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c</location>
+	<linkedResources>
+		<link>
+			<name>Inc</name>
+			<type>2</type>
+			<location>/home/arne/git/stm32-cubemx-test/test/Inc</location>
 		</link>
 		<link>
 			<name>Application/SW4STM32/startup_stm32f103xb.s</name>
 			<type>1</type>
-			<location>PARENT-1-PROJECT_LOC/startup_stm32f103xb.s</location>
+			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32f103xb.s</locationURI>
 		</link>
 		<link>
 			<name>Application/User/main.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Src/main.c</location>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/stm32f1xx_hal_msp.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Src/stm32f1xx_hal_msp.c</location>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32f1xx_hal_msp.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/stm32f1xx_it.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Src/stm32f1xx_it.c</location>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32f1xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32f1xx.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Src/system_stm32f1xx.c</location>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/system_stm32f1xx.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal.c</name>
 			<type>1</type>
 			<location>/home/arne/STM32Cube/Repository/STM32Cube_FW_F1_V1.6.0/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c</location>
+		</link>
+		<link>
+			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc.c</name>
+			<type>1</type>
+			<location>/home/arne/STM32Cube/Repository/STM32Cube_FW_F1_V1.6.0/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c</location>
+		</link>
+		<link>
+			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc_ex.c</name>
+			<type>1</type>
+			<location>/home/arne/STM32Cube/Repository/STM32Cube_FW_F1_V1.6.0/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c</location>
 		</link>
 		<link>
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_cortex.c</name>
